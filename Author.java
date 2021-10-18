@@ -12,7 +12,6 @@ import java.util.Scanner;
  *
  */
 
-// this is from master 
 public class Author {
 
     private Vocabulary vocabulary;
