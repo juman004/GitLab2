@@ -11,6 +11,8 @@ import java.util.Scanner;
  * @author zeil
  *
  */
+
+// this is from master 
 public class Author {
 
     private Vocabulary vocabulary;
