@@ -1,7 +1,7 @@
 
 
 
-package src.test.resources.unitTesting;
+package edu.odu.cs.cs350.unitTesting;
 
 import java.util.List;
 
