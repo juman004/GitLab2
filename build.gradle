@@ -87,7 +87,7 @@ task deployReports(type:Copy, dependsOn: ['copyWebPages']){
         grgit.commit {
             message = "Updating web pages"
         }
-       grgit.push {}
+          
     }
 
 
