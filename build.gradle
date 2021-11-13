@@ -1,22 +1,97 @@
 plugins {
    id 'java'
+   id 'project-report'
+   id "org.jbake.site" version "5.5.0" 
+   id "org.ajoberstar.grgit" version "4.1.0"
+   id "org.xbib.gradle.plugin.git" version "2.0.0"
 }
 
 java {
     sourceCompatibility = JavaVersion.toVersion(11)
     targetCompatibility = JavaVersion.toVersion(11)
 }
-
 repositories {
     jcenter()
+    mavenCentral()
 }
 
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter:5.7.0' 
     testImplementation 'org.hamcrest:hamcrest-library:2.2'
+     
 }
 
 test {  
     ignoreFailures = true 
     useJUnitPlatform()
+}
+javadoc {                  
+   options.with {
+     links 'https://docs.oracle.com/javase/8/docs/api/', 'gradle/javadocs/jdk'
+   }
+   failOnError = false;  
+}
+
+test.ignoreFailures=true                
+//check.dependsOn htmlDependencyReport    
+
+task copyDoc (type:Copy,dependsOn:['clonePages']) {
+	from 'build/docs'
+    into "$buildDir/gh-pages/docs"
+    
+}
+task copyWebPages(type:Copy,dependsOn:['copyReports']){
+	from 'src/main/html'
+    into "$buildDir/gh-pages/reports"
+}
+task copyReports(type:Copy,dependsOn:['copyDoc']){
+	from 'build/reports'
+    into "$buildDir/gh-pages/reports"
+    
+}
+
+task clonePages(type:Copy,dependsOn:['reports']) {                                             
+    doLast {
+        mkdir 'build/gh-pages'
+        def thisRepo = rootProject.projectDir.toString()
+        def pagesDir = "$buildDir/gh-pages"
+        project.delete {
+            delete pagesDir
+        }
+        def grgit = git.clone {
+            dir = pagesDir
+            uri = thisRepo
+            bare = false
+            refToCheckout = 'gh-pages'
+        }
+        grgit.checkout {
+            branch = 'gh-pages'
+        }
+        mkdir 'build/gh-pages/docs'
+        mkdir 'build/gh-pages/reports'
+    }
+}
+task reports (type:Copy, dependsOn: ['javadoc', 'test','check',]) {
+    description 'Ensures that JavaDoc and Test Have been ran. Ensures that files have been moved, and page cloned' 
+}
+task deployReports(type:Copy, dependsOn: ['copyWebPages']){
+	group = "Reporting"
+    description  'Copies reports to the gh-pages branch in preparation for a future push to GitHub'
+    doLast {
+        def pagesDir = "$buildDir/gh-pages"
+        def grgit = git.open {
+            dir = pagesDir + "/.git"
+        }
+        grgit.add (update: false, patterns: ['reports/'])
+        grgit.add (update: true, patterns: ['reports/'])
+        grgit.add (update: false, patterns: ['docs/'])
+        grgit.add (update: true, patterns: ['docs/'])
+        grgit.commit {
+            message = "Updating web pages"
+        }
+        
+    }
+
+
+		 
 }
