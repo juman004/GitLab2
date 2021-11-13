@@ -1,4 +1,11 @@
+<<<<<<< Upstream, based on origin/main
 eclipse.preferences.version=1
 org.eclipse.jdt.core.compiler.codegen.targetPlatform=11
 org.eclipse.jdt.core.compiler.compliance=11
 org.eclipse.jdt.core.compiler.source=11
+=======
+eclipse.preferences.version=1
+org.eclipse.jdt.core.compiler.codegen.targetPlatform=11
+org.eclipse.jdt.core.compiler.compliance=11
+org.eclipse.jdt.core.compiler.source=11
+>>>>>>> 4b8341e Trying to go back
